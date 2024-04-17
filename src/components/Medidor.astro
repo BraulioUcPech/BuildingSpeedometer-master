@@ -1,0 +1,151 @@
+---
+
+---
+
+<script>
+  window.addEventListener("DOMContentLoaded", (event) => {
+    const downloadSize = 50000000; // Tamaño del archivo en bytes para pruebas
+    const uploadSize = 50000000; // Tamaño del archivo en bytes para pruebas
+
+    function calculateSpeed(size, startTime, endTime) {
+      const duration = (endTime - startTime) / 1000; // Duración en segundos
+      const bitsLoaded = size * 8; // Tamaño en bits
+      const speedBps = bitsLoaded / duration; // Velocidad en bps
+      const speedKbps = speedBps / 1024; // Velocidad en Kbps
+      const speedMbps = speedKbps / 1024; // Velocidad en Mbps
+      return speedMbps;
+    }
+
+    window.loadSpeed = async () => {
+      const testSpeedButton = document.getElementById("testSpeedButton");
+      testSpeedButton.disabled = true;
+      testSpeedButton.textContent = "Midiendo...";
+      document.getElementById("downloadSpeed").textContent = "0.00";
+      document.getElementById("uploadSpeed").textContent = "0.00";
+
+      // Simula la descarga
+      const downloadStartTime = new Date().getTime();
+      try {
+        await fetch(
+          "https://th.bing.com/th/id/R.5bd0bb702e1450b38c41120ca8de60f0?rik=uIIqf3m3C1Y9MA&pid=ImgRaw&r=0&sres=1&sresct=1",
+        );
+        const downloadEndTime = new Date().getTime();
+        const downloadSpeed = calculateSpeed(
+          downloadSize,
+          downloadStartTime,
+          downloadEndTime,
+        );
+        document.getElementById("downloadSpeed").textContent =
+          downloadSpeed.toFixed(2);
+      } catch (error) {
+        console.error("Error al descargar:", error);
+        document.getElementById("downloadSpeed").textContent = "Error";
+      }
+
+      // Simula la carga
+      const uploadStartTime = new Date().getTime();
+      try {
+        await fetch(
+          "https://th.bing.com/th/id/R.5bd0bb702e1450b38c41120ca8de60f0?rik=uIIqf3m3C1Y9MA&pid=ImgRaw&r=0&sres=1&sresct=1",
+          {
+            method: "POST",
+            body: new Blob([new ArrayBuffer(uploadSize)]),
+          },
+        );
+        const uploadEndTime = new Date().getTime();
+        const uploadSpeed = calculateSpeed(
+          uploadSize,
+          uploadStartTime,
+          uploadEndTime,
+        );
+        document.getElementById("uploadSpeed").textContent =
+          uploadSpeed.toFixed(2);
+
+
+      } catch (error) {
+        console.error("Error al subir:", error);
+        document.getElementById("uploadSpeed").textContent = "Error";
+      }
+
+      testSpeedButton.disabled = false;
+      testSpeedButton.textContent = "Comenzar Test de Velocidad";
+    };
+
+    const testSpeedButton = document.getElementById("testSpeedButton");
+    testSpeedButton.onclick = loadSpeed;
+  });
+</script>
+<main class="mt-20 flex flex-col items-center justify-center">
+  <div class="p-8 rounded-lg shadow max-w-2xl">
+    <div class="text-center">
+      <h2 class="text-2xl font-semibold mb-4">
+        Tu velocidad de internet es de
+      </h2>
+      <div class="text-8xl font-extrabold flex justify-center items-baseline">
+        <span id="downloadSpeed"></span>
+        <span class="text-4xl font-medium ml-2">Mbps</span>
+      </div>
+      <div class="mt-8 flex justify-center">
+        <button
+          id="testSpeedButton"
+          onclick="loadSpeed()"
+          class="rounded-full p-4"
+        >
+          <img src="/progress-svgrepo-com.svg" />
+        </button>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-title">Latencia</div>
+        <div class="stat-value">23<span class="text-sm">ms</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Descarga</div>
+        <div id="uploadSpeed" class="stat-value"></div>
+        <span class="text-sm">Mbps</span>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Carga</div>
+        <div class="stat-value">249<span class="text-sm">ms</span></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="mt-8">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <p class="text-sm font-bold">Cliente</p>
+          <p>Kanasín, MX</p>
+        </div>
+        <div>
+          <p class="text-sm font-bold">Servidor(es)</p>
+          <p>Mexico City, MX | Dallas, US</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="grid h-20 card bg-base-300 rounded-box px-6 mt-8">
+        <div class="flex justify-between items-center">
+          <div>
+            <button class="hover:text-blue-700 transition-colors">
+              <a class="link">Configuracion</a>
+            </button>
+          </div>
+          <div class="flex items-center">
+            <button class="text-blue-600 hover:text-blue-700 transition-colors">
+              <i class="fas fa-download"></i> 170MB
+            </button>
+            <button
+              class="text-blue-600 hover:text-blue-700 transition-colors ml-4"
+            >
+              <i class="fas fa-upload"></i> 120MB
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

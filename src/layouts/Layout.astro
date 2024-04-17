@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html data-theme="light" lang="en">
+  <head>
+    <script>
+      const themeController = document.querySelectorAll(".theme-controller");
+      themeController.forEach((controller) => {
+        controller.addEventListener("change", (e) => {
+          if (e.target instanceof HTMLInputElement) {
+            const theme = e.target.value;
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("theme", theme);
+          }
+        });
+      });
+
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        const inputElement = document.querySelector(
+          `input[value="${savedTheme}"]`,
+        );
+        if (inputElement instanceof HTMLInputElement) {
+          inputElement.checked = true;
+        }
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/icons.jpg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
