@@ -7,7 +7,11 @@
     const downloadSize = 50000000; // Tamaño del archivo en bytes para pruebas
     const uploadSize = 50000000; // Tamaño del archivo en bytes para pruebas
 
-    function calculateSpeed(size, startTime, endTime) {
+    function calculateSpeed(
+      size: number,
+      startTime: number,
+      endTime: number,
+    ): number {
       const duration = (endTime - startTime) / 1000; // Duración en segundos
       const bitsLoaded = size * 8; // Tamaño en bits
       const speedBps = bitsLoaded / duration; // Velocidad en bps
@@ -16,12 +20,22 @@
       return speedMbps;
     }
 
-    window.loadSpeed = async () => {
-      const testSpeedButton = document.getElementById("testSpeedButton");
-      testSpeedButton.disabled = true;
-      testSpeedButton.textContent = "Midiendo...";
-      document.getElementById("downloadSpeed").textContent = "0.00";
-      document.getElementById("uploadSpeed").textContent = "0.00";
+    (window as any).loadSpeed = async () => {
+      const testSpeedButton = document.getElementById(
+        "testSpeedButton",
+      ) as HTMLButtonElement;
+      if (testSpeedButton) {
+        testSpeedButton.disabled = true;
+        testSpeedButton.textContent = "Midiendo...";
+      }
+      const downloadSpeedElement = document.getElementById("downloadSpeed");
+      if (downloadSpeedElement) {
+        downloadSpeedElement.textContent = "0.00";
+      }
+      const uploadSpeedElement = document.getElementById("uploadSpeed");
+      if (uploadSpeedElement) {
+        uploadSpeedElement.textContent = "0.00";
+      }
 
       // Simula la descarga
       const downloadStartTime = new Date().getTime();
@@ -35,11 +49,16 @@
           downloadStartTime,
           downloadEndTime,
         );
-        document.getElementById("downloadSpeed").textContent =
-          downloadSpeed.toFixed(2);
+        const downloadSpeedElement = document.getElementById("downloadSpeed");
+        if (downloadSpeedElement) {
+          downloadSpeedElement.textContent = downloadSpeed.toFixed(2);
+        }
       } catch (error) {
         console.error("Error al descargar:", error);
-        document.getElementById("downloadSpeed").textContent = "Error";
+        const downloadSpeedElement = document.getElementById("downloadSpeed");
+        if (downloadSpeedElement) {
+          downloadSpeedElement.textContent = "Error";
+        }
       }
 
       // Simula la carga
@@ -58,21 +77,26 @@
           uploadStartTime,
           uploadEndTime,
         );
-        document.getElementById("uploadSpeed").textContent =
-          uploadSpeed.toFixed(2);
-
-
+        const uploadSpeedElement = document.getElementById("uploadSpeed");
+        if (uploadSpeedElement) {
+          uploadSpeedElement.textContent = uploadSpeed.toFixed(2);
+        }
       } catch (error) {
-        console.error("Error al subir:", error);
-        document.getElementById("uploadSpeed").textContent = "Error";
+        console.error("Error al cargar:", error);
+        const uploadSpeedElement = document.getElementById("uploadSpeed");
+        if (uploadSpeedElement) {
+          uploadSpeedElement.textContent = "Error";
+        }
       }
-
       testSpeedButton.disabled = false;
       testSpeedButton.textContent = "Comenzar Test de Velocidad";
     };
 
     const testSpeedButton = document.getElementById("testSpeedButton");
-    testSpeedButton.onclick = loadSpeed;
+    if (testSpeedButton) {
+      const loadSpeed = (window as any).loadSpeed;
+      testSpeedButton.onclick = loadSpeed;
+    }
   });
 </script>
 <main class="mt-20 flex flex-col items-center justify-center">
